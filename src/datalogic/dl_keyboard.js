@@ -10,6 +10,7 @@ class DLKbdMgr {
      */
     #getDLKeybardMgr() {
         try {
+            // eslint-disable-next-line no-undef
             return _DLKeyboardMgr;
         } catch(e) {
             throw ReferenceError("_DLKeyboardMgr has not been injected by Datalogic Enterprise Browser");

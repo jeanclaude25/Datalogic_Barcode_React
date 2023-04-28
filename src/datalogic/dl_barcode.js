@@ -1,19 +1,28 @@
 // Interface for barcode functions.
 
+import { configuration } from "../store";
+
 const DL_BARCODE_MGR_VER = 2;
 
 class DLBcdMgr {
-
+    
     /**
      * Private method to return an instance of DLBarcodeMgr.
      * @returns {DLBcdMgr} An instance of DLBcdMgr.
      * @throws {ReferenceError} If _DLBarcodeMgr is not injected by Datalogic Enterprise Browser.
      */
+    
     #getDLBarcodeMgr() {
+        
+        
         try {
+            configuration.SCAN_IS_HERE = true
+            // eslint-disable-next-line no-undef
             return _DLBarcodeMgr;
         } catch(e) {
-            throw ReferenceError("_DLBarcodeMgr has not been injected by Datalogic Enterprise Browser");
+            configuration.SCAN_IS_HERE = false
+            // throw ReferenceError("_DLBarcodeMgr has not been injected by Datalogic Enterprise Browser");
+            
         }
     }
 
@@ -479,7 +488,7 @@ export const BcdPropIds = {
 };
 
 // Symbology identifiers
-const SymIds = {
+export const SymIds = {
     NOT_DEFINED             : 0,
     CODE39                  : 1,
     DISCRETE25              : 2,
