@@ -12,6 +12,8 @@ export default function App() {
   const [stopButtonDisabled, setStopButtonDisabled] = useState(false)
   const snap = useSnapshot(configuration)
   const [scanned, setScanned] = useState([])
+  const [symbValue, setSymbValue] = useState("")
+  const [dataValue, setDataValue] = useState("")
 
 //
 function displayScans() {
@@ -35,11 +37,10 @@ function displayScans() {
   const startScan = useCallback(() => {
     console.log("start scanning")
       setStatus("Scanning started.");
-      document.getElementById('symbology').innerHTML = "&nbsp";
-      document.getElementById('data').innerHTML = "&nbsp";
+      setSymbValue("&nbsp")
+      setDataValue("&nbsp")
       enableScanButton(false);
       DLBarcodeMgr.startDecode(configuration.SCAN_TIMEOUT);
-      debugger;
     }, []);
 
   // Stop button handler
@@ -122,31 +123,25 @@ function initProperties() {
 }
 
 useEffect(()=>{
-  // Disable the scanned data passing to the ui button when it has focus.
   try {
-      // If the scanner is not available then display a warning message.
+
       initProperties();
-
-      document.getElementById("start").addEventListener("click", startScan);
-      document.getElementById("stop").addEventListener("click", stopScan);
-
-      // Initialize the scanning, on failure disable the start button
       enableScanButton(true);
-      if (!initScanning()) {
-          document.getElementById("start").disabled = true;
-      }
+      if (!initScanning()) { setStartButtonDisabled(true) }
+
   } catch (e) {
+
       if (e instanceof ReferenceError && e.message.includes("_DLBarcodeMgr")) {
           console.error(e)
           console.log("ERROR: DLBarcodeMgr not injected. Barcode scanning functions may not work as expected.");
           alert("Error: DLBarcodeMgr not detected. SDK calls may not work as expected. For full functionality, use a Datalogic mobile scanner and the latest version of Enterprise Browser.");
-      }
+          }
 
       if (e instanceof ReferenceError && e.message.includes("_DLKeyboardMgr")) {
           console.error(e)
           console.log("ERROR: DLKeyboardMgr not injected. Barcode scanning functions may not work as expected.");
           alert("Error: DLKeyboardMgr not detected. SDK calls may not work as expected. For full functionality, use a Datalogic mobile scanner and the latest version of Enterprise Browser.");
-      }
+          }
   }
 }, [initScanning, startScan, stopScan]);
 
@@ -161,6 +156,7 @@ useEffect(()=>{
         <button className="action-button" id="start" disabled={startButtonDisabled} onClick={startScan}>
           Start Scanning
         </button>
+
         <button className="action-button" id="stop" disabled={stopButtonDisabled} onClick={stopScan}>
           Stop Scanning
         </button>
@@ -174,12 +170,12 @@ useEffect(()=>{
 
       <div>
         <h3>Symbology:</h3>
-        <div id="symbology">&nbsp</div>
+        <div id="symbology">{symbValue}</div>
         </div>
 
         <div>
     <h3>Data:</h3>
-    <div id="data">&nbsp</div>
+    <div id="data">{dataValue}</div>
 </div>
 
         </>:<>
